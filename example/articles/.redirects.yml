@@ -1,0 +1,4 @@
+# Old paths and where they go now, written as 301 redirects ahead of the general rule
+# /blog/<category>/<slug>/ -> /<slug>/. A target of / means the page is gone.
+/old/first-example/: /first-example/
+/old/drafts/*: /

@@ -1,17 +1,16 @@
 ---
-layout: ../layout/MarkdownLayout.astro
 title: Impressum
 description: Gesetzlich vorgeschriebene Anbieterkennzeichnung.
-subscribe: false
+lang: de
 ---
 
-Angaben gemäß § 5 TMG:
+Angaben gemäß § 5 DDG:
 
 **Leopold Lemmermann**  
 Adresse auf Anfrage  
 E-Mail: [legal@leolem.dev](mailto:legal@leolem.dev)
 
-### Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
+### Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
 
 Leopold Lemmermann  
 E-Mail: [legal@leolem.dev](mailto:legal@leolem.dev)

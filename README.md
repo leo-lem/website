@@ -1,32 +1,29 @@
 # leolem.dev
 
-[![Deploy](https://github.com/leo-lem/leolem.dev/actions/workflows/main.yml/badge.svg)](https://github.com/leo-lem/leolem.dev/actions/workflows/main.yml)
-[![Cloudflare](https://img.shields.io/badge/Cloudflare-console-orange?logo=cloudflare)](https://dash.cloudflare.com/f755b753711edb6424a86788d5e355c2/leolem.dev)
-[![OneSignal](https://img.shields.io/badge/OneSignal-console-red)](https://dashboard.onesignal.com/apps/932ddbaa-045a-49d6-80ab-774924450946)
-[![Search](https://img.shields.io/badge/Search-console-brightgreen?logo=google&logoColor=brightgreen)](https://search.google.com/search-console?resource_id=sc-domain%3Aleolem.dev)
-[![Content Repository](https://img.shields.io/badge/Content-repo-white?logo=github)](https://github.com/leo-lem/content.leolem.dev.git)
-[![Open in Dev Containers](https://img.shields.io/badge/Dev_Containers-open-blue?logo=docker)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/leo-lem/leolem.dev.git)
+The code behind [leolem.dev](https://leolem.dev), the personal site of Leopold Lemmermann.
 
-Personal site and blog built with Astro. It hosts my portfolio, writing, and a few small engineering experiments I use to stay honest.
+This repository is a read-only mirror. The site is built in a private repository, together with its articles, and the code is copied here on each new version. Issues and pull requests are turned off. It is MIT licensed, so take whatever is useful.
 
-## What’s in here
+## What it is
 
-- Portfolio projects (backend automation, DevOps, SwiftUI)
-- Engineering articles and case studies
-- Services and contact links
-- Static pages (about, imprint, privacy)
+A static site with no framework and no bundler. `build.mjs` is a plain Node script on three small libraries (markdown-it, yaml, zod). It reads the articles, checks their frontmatter, and writes every page into `dist/`, along with the sitemap, `llms.txt`, a Markdown version of each article and the redirects.
 
-## Tech stack
+- **The fractal:** one canvas with a WebGL 2 shader (`src/fractal.glsl`) and a small script per page (`src/home.js`, `src/article.js`). It is decoration over real HTML: every page carries all its text, and without WebGL or script the pages show a plain layout.
+- **Scenes:** each article's artwork is a short list of forms in its frontmatter, placed on the fractal's grid by `scenes.mjs` and drawn as SVG, and as JPG for link previews.
+- **Off the clock:** the newest music release, trip and run, fetched while building (`embeds.mjs`, `embeds.yml`) and drawn as cards. When a service can't be reached they fall back to plain links, and without Strava secrets in `.env` the run card stays a stand-in.
+- **Hosting:** static files on Cloudflare Workers (`wrangler.jsonc`), with `serve.mjs` mimicking it locally.
 
-- Astro + TailwindCSS
-- Markdown content (portfolio entries and blog posts)
-- GitHub Actions deployment to GitHub Pages
-- CI checks including smoke tests and a CO₂ regression pipeline
+## Running it locally
 
-## Development
+Needs Node 24.
 
-Use the Dev Containers badge if you want a prebuilt environment.
+```sh
+npm install
+npm run dev
+```
 
-## Deployment
+That builds the site and serves it on http://localhost:4321. The real articles aren't in this repository, so the build uses the stand-ins in `example/`: `example/articles/` holds the articles and their redirects, `example/docs/positioning.md` the bio and profiles.
 
-Deploys on schedule via GitHub Actions to GitHub Pages.
+`TODAY=YYYY-MM-DD` builds the site as of another day, and `PREVIEW=1` includes articles dated in the future.
+
+The tests in `test/` (Playwright) run against whatever was built: `npm run build && npm test`.

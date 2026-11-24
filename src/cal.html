@@ -1,0 +1,58 @@
+<!-- Schedule a call: our own dialog over the page, with Cal.com's booking calendar inline inside it (EU
+     instance), so the close button sits on the dialog itself. Cal.com's script loads only on the first open,
+     so the page contacts no third party until then. Without script, or if Cal.com can't be reached, the
+     button is a plain link to the booking page. -->
+<style>
+.pill[data-cal]{text-decoration:none;display:inline-block}
+.calbox{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(12,13,15,.78)}
+.calbox.open{display:flex}
+.calbox .panel{position:relative;width:min(1040px,100%);max-height:calc(100vh - 48px);overflow:auto;border-radius:16px;border:1px solid #2e323a;background:#15171a;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.calbox .bar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 6px 24px;font-family:'Space Grotesk',sans-serif;font-size:18px;color:#e8e9ec}
+.calbox .x{all:unset;cursor:pointer;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid #2e323a;color:#b9bec9}
+.calbox .x:hover,.calbox .x:focus-visible{color:#fff;border-color:#5A6FA5}
+.calbox .inline{min-height:520px;padding:0 8px 8px}
+.calbox .wait{padding:120px 0;text-align:center;font-size:14px;color:#7d8390}
+.calbox .inline:has(iframe) .wait{display:none}
+.calbox .wait a{color:#e8e9ec}
+@media (max-width:720px){.calbox{padding:0}.calbox .panel{border-radius:0;max-height:100vh;height:100%}}
+</style>
+<div class="calbox" id="calbox" role="dialog" aria-modal="true" aria-label="Schedule a call">
+  <div class="panel">
+    <div class="bar"><span>Schedule a call</span><button type="button" class="x" id="calClose" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l8 8"></path><path d="M10 2l-8 8"></path></svg></button></div>
+    <div class="inline" id="calInline"><p class="wait">Loading the calendar…</p></div>
+  </div>
+</div>
+<script>
+(function () {
+  var ORIGIN = 'https://app.cal.eu', LINK = 'leo-lem/gettoknow', NS = 'gettoknow';
+  var box = document.getElementById('calbox'), loaded = false, opener = null;
+  function load() {
+    if (loaded) return; loaded = true;
+    // Cal.com's own loader: queues calls until embed.js has arrived.
+    (function (C, A, L) {
+      var p = function (a, ar) { a.q.push(ar); }, d = C.document;
+      C.Cal = C.Cal || function () {
+        var cal = C.Cal, ar = arguments;
+        if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; var s = d.createElement('script'); s.src = A; s.onerror = fail; d.head.appendChild(s); cal.loaded = true; }
+        if (ar[0] === L) { var api = function () { p(api, arguments); }, ns = ar[1]; api.q = api.q || []; if (typeof ns === 'string') { cal.ns[ns] = cal.ns[ns] || api; p(cal.ns[ns], ar); p(cal, ['initNamespace', ns]); } else p(cal, ar); return; }
+        p(cal, ar);
+      };
+    })(window, ORIGIN + '/embed/embed.js', 'init');
+    Cal('init', NS, { origin: ORIGIN });
+    Cal.ns[NS]('inline', { elementOrSelector: '#calInline', calLink: LINK, layout: 'month_view', config: { layout: 'month_view', theme: 'dark' } });
+    Cal.ns[NS]('ui', { theme: 'dark', layout: 'month_view', cssVarsPerTheme: { dark: { 'cal-brand': '#A05070', 'cal-bg': '#15171a', 'cal-bg-muted': '#181a1f', 'cal-border': '#2e323a', 'cal-border-subtle': '#23262d' } } });
+  }
+  // If Cal.com doesn't load, the dialog says so and offers the booking page; the page itself stays.
+  function fail() { var w = document.querySelector('#calInline .wait'); if (w) w.innerHTML = 'The calendar didn\u2019t load. <a href="https://cal.eu/' + LINK + '" target="_blank" rel="noopener">Open the booking page</a>'; }
+  function open(a) { opener = a; load(); setTimeout(function () { if (!document.querySelector('#calInline iframe')) fail(); }, 8000); box.classList.add('open'); document.documentElement.style.overflow = 'hidden'; document.getElementById('calClose').focus(); }
+  function close() { box.classList.remove('open'); document.documentElement.style.overflow = ''; if (opener) opener.focus(); }
+  window.__calOpen = function () { return box.classList.contains('open'); };
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-cal]');
+    if (a) { e.preventDefault(); open(a); }
+  });
+  document.getElementById('calClose').addEventListener('click', close);
+  box.addEventListener('click', function (e) { if (e.target === box) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && box.classList.contains('open')) close(); }, true);
+})();
+</script>

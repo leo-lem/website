@@ -1,46 +1,24 @@
 {
   "name": "leolem.dev",
+  "private": true,
   "type": "module",
-  "version": "3.1",
+  "license": "MIT",
   "scripts": {
-    "start": "astro dev --host",
-    "build": "astro build",
-    "test": "playwright test",
-    "test:smoke": "npm test -- test/smoke.spec.ts",
-    "test:tool": "npm test -- -c playwright.tool.config.ts",
-    "test:co2": "tsx test/check_co2.ts",
-    "tool:sync": "tsx tool/sync.ts",
-    "tool:icons": "tsx tool/icons.ts",
-    "tool:notify": "tsx tool/notify.ts",
-    ".content": "git clone https://github.com/leo-lem/content.leolem.dev.git .content"
+    "build": "node build.mjs",
+    "serve": "node serve.mjs",
+    "dev": "node build.mjs && node serve.mjs",
+    "favicon": "node favicon.mjs",
+    "test": "npx playwright test",
+    "images": "node images.mjs"
   },
   "dependencies": {
-    "@astrojs/node": "^11.1.6",
-    "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.4",
-    "@tailwindcss/typography": "^0.5",
-    "@tailwindcss/vite": "^4.3",
-    "astro": "^7.3.4",
-    "astro-icon": "^1.2",
-    "node-fetch": "^3.3",
-    "tailwindcss": "^4.2"
+    "markdown-it": "^15.0.3",
+    "sharp": "^0.35.5",
+    "yaml": "^2.6.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2",
-    "@iconify-json/simple-icons": "^1.2",
-    "@playwright/test": "^1.63",
-    "@tgwf/co2": "^0.19",
-    "@types/node": "^26.6",
-    "@types/node-fetch": "^2.6",
-    "@types/tgwf__co2": "^0.14",
-    "@types/xml2js": "^0.4",
-    "favicons": "^7.3",
-    "tsx": "^4.23",
-    "typescript": "^7.0",
-    "xml2js": "^0.6"
-  },
-  "allowScripts": {
-    "esbuild@0.28.1": true,
-    "sharp@0.35.3": true
+    "@playwright/test": "^1.65.1",
+    "wrangler": "^4.167.0"
   }
 }

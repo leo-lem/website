@@ -1,0 +1,10 @@
+{{#articles}}{{note}}
+
+{{title}}
+{{summary}}
+Read it: {{url}}
+
+{{/articles}}Thanks for reading!
+Leo
+
+You get this because you signed up at https://leolem.dev/. Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}

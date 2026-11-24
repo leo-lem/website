@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{{head}}
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#15171a">
+
+{{fonts}}
+{{chrome}}
+<!-- With script the page starts as the stage over the fractal; home.js drops back to the stacked page if WebGL 2 is
+     missing. Without script it stays an ordinary stacked page. -->
+<script>document.documentElement.classList.add('gl')</script>
+<style>
+html,body{margin:0;height:100%;min-height:560px;background:#15171a}
+a{color:#e8e9ec}a:hover{color:#ffffff}
+h1,h2{font-family:'Space Grotesk',sans-serif;font-weight:500;margin:0;text-wrap:balance}
+.stage{position:relative;height:100%;min-height:560px;overflow:hidden;outline:none;background:#15171a;color:#e8e9ec;font-family:Inter,system-ui,sans-serif}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.hd{position:absolute;top:0;left:0;right:0;padding:28px 40px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.hd .name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:500;text-decoration:none;white-space:nowrap}
+.pill{white-space:nowrap;padding:11px 18px;border-radius:999px;text-decoration:none;font-size:15px;background:rgba(21,23,26,.88);border:1px solid #2e323a;font-family:inherit;cursor:pointer}
+.sec{position:absolute;opacity:0;visibility:hidden;will-change:transform,opacity}
+.kick{margin:0 0 18px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#9aa0ad}
+.sec h2{font-size:44px;line-height:1.08}
+.sec .line{margin:22px 0 0;font-size:18px;line-height:1.6;color:#b9bec9}
+.s0{left:8vw;top:50%;margin-top:-170px;max-width:720px}
+.s0 h1{font-size:96px;line-height:.98;letter-spacing:-.025em}
+.s0 .tag{margin:28px 0 0;font-family:'Space Grotesk',sans-serif;font-size:30px;line-height:1.2;color:#c9ccd4}
+.s1{right:190px;top:50%;margin-top:-170px;width:480px}
+.s2{left:8vw;top:50%;margin-top:-130px;width:500px}
+.s2 .list{display:flex;flex-direction:column;gap:24px}
+.s2 .list a{text-decoration:none;display:flex;flex-direction:column;gap:6px;color:#d6d8de;transition:color .3s}
+.s2 .list a b{font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:28px;line-height:1.15}
+.s2 .list a span{font-size:14px;color:#9aa0ad}
+.s2 .list a:hover,.s2 .list a:focus-visible,.s2 .list a.hi{color:#ffffff}
+.s2 .list a b span{font-size:inherit;color:inherit;white-space:nowrap}.s2 .list a b i{font-style:normal;display:inline-block;transition:transform .3s}
+.s2 .list a:hover b,.s2 .list a:focus-visible b,.s2 .list a.hi b{text-decoration:underline;text-decoration-color:#5A6FA5;text-decoration-thickness:1px;text-underline-offset:5px}
+.s2 .list a:hover b i,.s2 .list a.hi b i{transform:translateX(3px)}
+.s3{right:190px;top:20vh;width:420px}
+.s3 .kick{margin-bottom:10px}
+.s3 .say{margin:0;font-family:'Space Grotesk',sans-serif;font-size:22px;line-height:1.3;color:#c9ccd4}
+.s4{left:8vw;top:50%;margin-top:-160px;width:min(440px,32vw)}
+.s4 .line{white-space:nowrap}
+.s4 h2{font-size:46px;line-height:1.06}
+.s4 form{margin:24px 0 0;display:flex;gap:10px;flex-wrap:wrap}
+.s4 input{flex:1 1 200px;min-width:0;padding:13px 18px;border-radius:999px;border:1px solid #3a3e47;background:rgba(21,23,26,.9);color:#e8e9ec;font-family:inherit;font-size:15px}
+/* The profiles join the header from My Writing on; I'm Leo shows them itself. */
+.stage .hd .icons{opacity:0;transition:opacity .4s}.stage .hd .icons .hx{pointer-events:none}.stage.from-writing .hd .icons{opacity:1}.stage.from-writing .hd .icons .hx{pointer-events:auto}
+html:not(.gl) .stage .hd .icons{opacity:1}html:not(.gl) .stage .hd .icons .hx{pointer-events:auto}
+.stage .corner{opacity:0;pointer-events:none;transition:opacity .4s}.stage.at-end .corner{opacity:1;pointer-events:auto}
+.s4 button{padding:13px 20px;border-radius:999px;border:1px solid #e8e9ec;background:#e8e9ec;color:#15171a;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer}
+/* The embeds lie under the fractal, which opens over them. */
+.embeds{position:absolute;inset:0;visibility:hidden;transform-origin:0 0;will-change:transform}
+.ewin{position:absolute;display:block;overflow:hidden;text-decoration:none;color:inherit}
+.ewin .card{position:absolute;display:block;filter:brightness(.9);transition:filter .45s}
+.ewin .card img,.ewin .card svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ewin:hover .card,.ewin:focus-visible .card{filter:brightness(1.2)}
+/* The article cells are drawn by the fractal; these only catch the pointer. */
+.cells{position:absolute;inset:0;pointer-events:none;transform-origin:0 0}
+.cells a{position:absolute;display:block}
+.rail{position:absolute;right:40px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.rail button{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:6px 0;font-size:13px;color:#8a909c}
+.rail button i{display:block;width:14px;height:2px;background:#3a3e47;transition:width .3s,background .3s}
+.rail button.on{color:#e8e9ec}
+.rail button.on i{width:28px;background:#A05070}
+.cue{position:absolute;left:50%;bottom:36px;margin-left:-10px;transition:opacity .4s}
+.cue svg{display:block;animation:cue 2.2s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(8px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.cue svg{animation:none}}
+.tune{position:absolute;left:16px;bottom:44px;z-index:4;width:250px;padding:14px;border-radius:10px;border:1px solid #2e323a;background:rgba(21,23,26,.94);display:none;flex-direction:column;gap:9px;font-size:12px;color:#b9bec9}
+.tune.open{display:flex}
+.tune label{display:flex;flex-direction:column;gap:3px}
+.tune input{width:100%;margin:0;accent-color:#A05070}
+.tune p{margin:4px 0 0;font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1.5;color:#e8e9ec;user-select:all}
+.tuneBtn{all:unset;position:absolute;left:16px;bottom:14px;z-index:4;cursor:pointer;font-size:12px;color:#8a909c;padding:4px 8px;border-radius:999px;border:1px solid #2e323a;background:rgba(21,23,26,.7)}
+@media (max-width:720px){.tune,.tuneBtn{display:none!important}}
+/* Without the fractal (no script or no WebGL 2): the five sections stack as an ordinary page, the three Off the
+   clock faces together as their hexagon, and the browser scrolls. */
+html:not(.gl),html:not(.gl) body{height:auto;min-height:0}
+html:not(.gl) .stage{height:auto;min-height:0;overflow:visible;display:flex;flex-direction:column;align-items:center;padding:0 0 64px}
+html:not(.gl) #gl,html:not(.gl) .cells,html:not(.gl) .rail,html:not(.gl) .cue{display:none}
+html:not(.gl) .hd{position:static;align-self:stretch;order:0}
+html:not(.gl) .sec{position:static;opacity:1!important;visibility:visible!important;transform:none!important;left:auto;right:auto;top:auto;bottom:auto;margin:0;width:100%;max-width:720px;box-sizing:border-box;padding:56px 24px 0;align-self:center}
+html:not(.gl) .s0{order:1;padding-top:12vh}html:not(.gl) .s1{order:2}html:not(.gl) .s2{order:3}html:not(.gl) .s3{order:4}html:not(.gl) .embeds{order:5}html:not(.gl) .s4{order:6;width:auto}
+html:not(.gl) .s4 .line{white-space:normal}
+html:not(.gl) .corner{position:static;order:7;margin:28px 0 0;opacity:1;pointer-events:auto}
+html:not(.gl) .embeds{position:relative;inset:auto;visibility:visible;transform:none!important;width:min(560px,90vw);aspect-ratio:1;margin:32px auto 0}
+html:not(.gl) .ewin{position:absolute;inset:0;left:0!important;top:0!important;width:100%!important;height:100%!important}
+html:not(.gl) .ewin .card{inset:0;left:0!important;top:0!important;width:100%!important;height:100%!important}
+html:not(.gl) .ewin:nth-child(1){clip-path:polygon(6.7% 25%,50% 0,93.3% 25%,50% 50%)!important}
+html:not(.gl) .ewin:nth-child(2){clip-path:polygon(6.7% 25%,50% 50%,50% 100%,6.7% 75%)!important}
+html:not(.gl) .ewin:nth-child(3){clip-path:polygon(50% 50%,93.3% 25%,93.3% 75%,50% 100%)!important}
+@media (max-width:720px){
+ .hd{padding:16px}
+ .hd .pill{padding:9px 14px;font-size:14px}
+ .hd .nl{display:none}
+ .rail{right:16px;top:auto;bottom:24px;transform:none;flex-direction:row;gap:10px}
+ .rail button span{display:none}
+ .sec{left:20px;right:20px;width:auto;margin:0;top:auto;bottom:76px}
+ .sec h1,.sec h2{text-wrap:pretty}
+ .s0,.s1,.s3,.s4{text-align:center}.s1 .profiles{justify-content:center}.s4 form{justify-content:center}
+ .sec h2{font-size:27px}
+ .sec .line{font-size:16px;line-height:1.55}
+ .kick{margin-bottom:12px}
+ .s0{top:96px;bottom:auto}
+ .s0 h1{font-size:13.6vw}
+ .s0 .tag{font-size:6.6vw;line-height:1.25;margin-top:20px}
+ .s2 .list{gap:16px}
+ .s2 .list a b{font-size:20px}
+ .s2 .list a span{font-size:13px}
+ .s3{width:auto;top:auto}
+ .s4 h2{font-size:27px}
+ .s4 form{flex-wrap:nowrap}
+ .s4 .line{white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" tabindex="0">
+  <div class="embeds" id="embeds">
+{{music}}
+{{travel}}
+{{run}}
+  </div>
+
+  <canvas id="gl" role="img" aria-label="Abstract fractal of triangles and hexagons. It forms a portrait of Leopold Lemmermann, holds the article artwork and opens over the embeds; seen from afar it is one hexagon."></canvas>
+
+  <div class="cells" id="cells">{{cells}}</div>
+
+  <header class="hd">
+    <a class="name" href="/" id="home">Leopold Lemmermann</a>
+    <nav aria-label="Main" style="display:flex;gap:10px">
+      {{icons}}
+      <a class="pill nl" href="#talk" id="toTalk" style="color:#b9bec9">Newsletter</a>
+      <a class="pill" id="openCal" data-cal href="https://cal.eu/leo-lem/gettoknow" style="background:#A05070;border-color:#A05070;color:#fff">Schedule a call</a>
+    </nav>
+  </header>
+
+  <section class="sec s0">
+    <p class="kick">{{kick}}</p>
+    <h1>Leopold Lemmermann</h1>
+    <p class="tag">{{tag}}</p>
+  </section>
+
+  <section class="sec s1">
+    <p class="kick">Who</p>
+    <h2>I work on what lets small teams run like big ones.</h2>
+    <p class="line">Infrastructure, automation and AI agents, built for the long run. I came into software through an economics degree, shipped my own iOS apps and wrote a thesis on verifying how systems behave.</p>
+    {{profiles}}
+  </section>
+
+  <section class="sec s2">
+    <p class="kick">Latest writing</p>
+    <div class="list">{{list}}</div>
+  </section>
+
+  <section class="sec s3">
+    <p class="kick">Off the clock</p>
+    <p class="say">I make music, run and travel as much as I can.</p>
+  </section>
+
+  <section id="talk" class="sec s4">
+    <p class="kick">Let's talk</p>
+    <h2>An idea, a problem, or just saying hi.</h2>
+    <p class="line">Schedule a call at the top, or get new articles by email.</p>
+    {{form}}
+  </section>
+
+  {{legal}}
+  <div class="cue" id="cue" aria-hidden="true">
+    <svg width="20" height="28" viewBox="0 0 20 28" fill="none" stroke="#b9bec9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v20"></path><path d="M4 16l6 6 6-6"></path></svg>
+  </div>
+
+  <nav class="rail" aria-label="Sections" id="rail"></nav>
+
+{{cal}}
+</div>
+
+<script id="fs" type="x-shader/x-fragment">/*SHADER*/</script>
+<script>var PHOTO_SRC = '/assets/photo.jpg', MATTE_SRC = '/assets/matte.png', SCENES = {{scenes}};</script>
+<script>/*APP*/</script>
+{{newsletter}}
+</body>
+</html>

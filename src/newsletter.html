@@ -1,0 +1,33 @@
+<style>
+/* The newsletter form (#39): its message under the field, and the honeypot nobody sees. */
+#nl input[type=email]{flex:1 1 200px;min-width:0;padding:13px 18px;border-radius:999px;border:1px solid #3a3e47;background:rgba(21,23,26,.9);color:#e8e9ec;font-family:inherit;font-size:15px}
+#nl button{padding:13px 20px;border-radius:999px;border:1px solid #e8e9ec;background:#e8e9ec;color:#15171a;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer}
+#nl button:disabled{opacity:.6;cursor:default}
+#nl .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.nl-msg{margin:12px 0 0;min-height:1.5em;font-size:15px;color:#b9bec9}
+</style>
+<script>
+// Sends the address to the Worker (subscribe.mjs), which mails a confirmation link.
+(function () {
+  var form = document.getElementById('nl'), msg = document.getElementById('nl-msg');
+  if (!form) return;
+  var button = form.querySelector('button');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (button.disabled) return;
+    button.disabled = true;
+    msg.textContent = 'Sending…';
+    fetch('/api/subscribe', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: form.email.value, website: form.website.value }),
+    }).then(function (r) {
+      if (r.ok) { msg.textContent = 'Check your inbox to confirm.'; form.reset(); return; }
+      msg.textContent = r.status === 400 ? 'That address doesn’t look right.'
+        : r.status === 429 ? 'That was a lot at once. Try again in a minute.'
+        : 'That didn’t go through. Try again in a minute.';
+    }, function () {
+      msg.textContent = 'That didn’t go through. Try again in a minute.';
+    }).then(function () { button.disabled = false; });
+  });
+})();
+</script>

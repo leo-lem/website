@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+{{head}}
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#15171a">
+{{fonts}}
+{{chrome}}
+<style>
+/* A plain page (imprint, privacy, 404): the article's text column on the dark page, with a quiet hexagon of the
+   fractal's pieces beside it. No WebGL. */
+html{background:#15171a}
+body{margin:0;background:#15171a;color:#e8e9ec;font-family:Inter,system-ui,sans-serif}
+a{color:#e8e9ec}a:hover{color:#fff}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:500;margin:0;text-wrap:balance}
+.hd{position:fixed;top:0;left:0;right:0;z-index:3;padding:28px 40px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(#15171a 60%,rgba(21,23,26,0))}
+.hd .name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:500;text-decoration:none;white-space:nowrap}
+.pill{white-space:nowrap;padding:11px 18px;border-radius:999px;text-decoration:none;font-size:15px;background:rgba(21,23,26,.88);border:1px solid #2e323a;color:#b9bec9}
+.pill.call{background:#A05070;border-color:#A05070;color:#fff}
+.deco{position:fixed;right:-6vw;top:50%;width:min(52vw,620px);transform:translateY(-50%);opacity:.55;pointer-events:none}
+main{position:relative;padding:170px 8vw 120px;max-width:620px}
+.kick{margin:0 0 18px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#9aa0ad}
+main h1{font-size:56px;line-height:1.04;letter-spacing:-.02em;margin-bottom:34px}
+main h2,main h3{font-size:24px;line-height:1.2;padding:30px 0 14px}
+main p,main li{font-size:17px;line-height:1.7;color:#c9ccd4}
+main p{margin:0 0 18px}
+main ul{margin:0 0 18px;padding-left:20px}
+main form{margin:8px 0 0;display:flex;gap:10px;flex-wrap:wrap}
+main hr{border:0;border-top:1px solid #2e323a;margin:34px 0 20px}
+.list{display:flex;flex-direction:column;gap:18px;margin:8px 0 34px}
+.list a{text-decoration:none;display:flex;flex-direction:column;gap:4px;color:#d6d8de}
+.list a b{font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:24px;line-height:1.2}
+.list a span{font-size:14px;color:#9aa0ad}
+.list a:hover b{text-decoration:underline;text-decoration-color:#5A6FA5;text-decoration-thickness:1px;text-underline-offset:5px}
+.legal{margin:60px 0 0;font-size:13px;color:#7d8390}.legal a{color:#9aa0ad;text-decoration:none}.legal a:hover{color:#e8e9ec}
+@media (max-width:720px){
+ .hd{padding:16px}.hd .nl{display:none}.pill{padding:9px 14px;font-size:14px}
+ .deco{opacity:.25;right:-30vw;width:90vw}
+ main{padding:120px 20px 80px}
+ main h1{font-size:38px}
+ main p,main li{font-size:16px}
+}
+</style>
+</head>
+<body>
+<header class="hd">
+  <a class="name" href="/">Leopold Lemmermann</a>
+  <nav aria-label="Main" style="display:flex;gap:10px">
+    {{icons}}
+    <a class="pill nl" href="/#talk">Newsletter</a>
+    <a class="pill call" data-cal href="https://cal.eu/leo-lem/gettoknow">Schedule a call</a>
+  </nav>
+</header>
+{{deco}}
+<main>
+{{body}}
+  {{legal}}
+</main>
+{{cal}}
+{{newsletter}}
+</body>
+</html>
