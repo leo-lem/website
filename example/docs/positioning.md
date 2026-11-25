@@ -22,5 +22,4 @@ profiles:
   github: https://github.com/leo-lem
   devto: https://dev.to/leo-lem
   medium: https://medium.com/@leo-lem
-  newsletter:
 ---

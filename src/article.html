@@ -17,18 +17,17 @@ html{background:#15171a;scrollbar-width:none}html::-webkit-scrollbar{display:non
 body{margin:0;background:#15171a;color:#e8e9ec;font-family:Inter,system-ui,sans-serif}
 a{color:#e8e9ec}a:hover{color:#fff}
 h1,h2{font-family:'Space Grotesk',sans-serif;font-weight:500;margin:0;text-wrap:balance}
-#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;pointer-events:none}
-main{position:relative}
+#gl{position:fixed;top:0;left:0;width:100%;height:100vh;height:100lvh;display:block;pointer-events:none}
+main{position:relative;overflow-x:clip}
 .hd{position:fixed;top:0;left:0;right:0;z-index:3;pointer-events:none;transition:opacity .3s,visibility .3s;padding:28px 40px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .hd a,.hd button{pointer-events:auto}
-.hd .name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:500;text-decoration:none;white-space:nowrap;transition:opacity .4s}
+.hd .name{display:inline-flex;align-items:center;gap:9px;font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:500;text-decoration:none;white-space:nowrap;transition:opacity .4s}
+.hd .mark{flex:none}
 .pill{white-space:nowrap;padding:11px 18px;border-radius:999px;text-decoration:none;font-size:15px;background:rgba(21,23,26,.88);border:1px solid #2e323a;font-family:inherit;cursor:pointer;color:#b9bec9}
 .kick{margin:0 0 18px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#9aa0ad}
-/* The opening: the scene with the title and the argument. */
 .hero{position:relative;height:100vh;min-height:560px}
 .hero .t{position:absolute;left:8vw;top:50%;transform:translateY(-50%);width:min(600px,42vw)}
 .hero .scene{display:none}
-/* Without WebGL the scene drawn at build time stands in for the fractal's. */
 html:not(.gl) #gl{display:none}
 html:not(.gl) .hero .scene{display:block;position:absolute;left:73vw;top:50%;width:min(80vh,32vw);height:auto;transform:translate(-50%,-50%)}
 .hero h1{font-size:64px;line-height:1.02;letter-spacing:-.02em}
@@ -37,23 +36,27 @@ html:not(.gl) .hero .scene{display:block;position:absolute;left:73vw;top:50%;wid
 .cue svg{display:block;animation:cue 2.2s ease-in-out infinite}
 @keyframes cue{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(8px);opacity:1}}
 @media (prefers-reduced-motion:reduce){.cue svg{animation:none}}
-/* The text: a calm dark column. The fractal keeps a strip on the right and travels deeper as you read. */
 .blk{position:relative;padding:0 0 0 8vw;background:linear-gradient(90deg,rgba(21,23,26,.87) 0,rgba(21,23,26,.87) 63%,rgba(21,23,26,0) 79%)}
 .blk.first{padding-top:230px;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 220px);mask-image:linear-gradient(to bottom,transparent 0,#000 220px)}
 .blk.last{padding-bottom:260px;-webkit-mask-image:linear-gradient(to top,transparent 0,#000 240px);mask-image:linear-gradient(to top,transparent 0,#000 240px)}
 .col{width:620px;max-width:100%}
 .col p{margin:0;padding:0 0 26px;font-size:19px;line-height:1.7;color:#c9ccd4}
 .col h2{font-size:32px;line-height:1.15;padding:38px 0 22px}
+.col ul,.col ol{margin:0;padding:0 0 26px 1.3em;font-size:19px;line-height:1.7;color:#c9ccd4}
+.col li{padding:0 0 8px}
+.col li p{padding:0}
+.col li ul,.col li ol{padding-bottom:0}
 .col p code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.86em;padding:2px 6px;border-radius:5px;background:#20232b}
-/* A link to another article carries that article's hexagon. */
+.disc{display:flex;align-items:center;gap:14px;margin:18px 0 0;padding:22px 0 0;border-top:1px solid #2e323a;text-decoration:none;width:max-content;max-width:100%}
+.disc svg{width:20px;height:20px;fill:#5A6FA5;flex:none;transition:fill .3s}
+.disc span{font-family:'Space Grotesk',sans-serif;font-size:19px;color:#d6d8de;transition:color .3s}
+.disc i{font-style:normal;color:#9aa0ad;transition:transform .3s,color .3s}
+.disc:hover svg{fill:#A05070}.disc:hover span{color:#fff}.disc:hover i{transform:translateX(4px);color:#fff}
 .alink{text-decoration:none;border-bottom:1px solid #5A6FA5;white-space:nowrap}
 .alink svg{width:.95em;height:.95em;vertical-align:-.12em;margin-right:.3em}
-/* Margin note: a tangent, beside the text. */
 .note{position:absolute;left:calc(8vw + 668px);top:8px;width:210px;font-size:14px;line-height:1.55;color:#8f95a3;border-left:1px solid #5A6FA5;padding-left:14px}
-/* The key sentence: the column opens a little and the fractal shows behind it. */
 .blk.key{background:linear-gradient(90deg,rgba(21,23,26,.93) 0,rgba(21,23,26,.74) 46%,rgba(21,23,26,.4) 70%,rgba(21,23,26,0) 86%);padding-top:54px;padding-bottom:80px}
 .key p{margin:0;font-family:'Space Grotesk',sans-serif;font-size:50px;line-height:1.1;letter-spacing:-.015em;width:min(920px,70vw);text-wrap:balance;text-shadow:0 2px 30px #15171a}
-/* Side by side */
 .sbs{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:6px 0 36px;background:#2e323a;border:1px solid #2e323a;border-radius:12px;overflow:hidden}
 .sbs div{background:#181a1f;padding:20px 22px}
 .sbs b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9aa0ad;margin-bottom:12px}
@@ -61,26 +64,22 @@ html:not(.gl) .hero .scene{display:block;position:absolute;left:73vw;top:50%;wid
 .sbs ul{margin:0;padding:0;list-style:none;font-size:17px;line-height:1.5;color:#c9ccd4}
 .sbs li{padding:5px 0}
 .sbs div:first-child li{color:#8f95a3}
-/* Figure: forms as data, drawn in the fractal's pieces. It assembles as it scrolls into view. */
 .fig{position:relative;margin:4px 0 40px;height:250px}
 .fig canvas{position:absolute;inset:0;width:100%;height:100%}
 .fig span{position:absolute;transform:translateX(-50%);font-size:13px;letter-spacing:.06em;color:#9aa0ad;white-space:nowrap;transition:opacity .5s}
 .fig span.f{color:#e3a3bd}
 .fig figcaption{position:absolute;left:0;right:0;bottom:-8px;font-size:14px;color:#7d8390}
-/* A number */
 .num{margin:6px 0 34px;display:flex;align-items:baseline;gap:22px}
 .num b{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:104px;line-height:.9;letter-spacing:-.03em;color:#e8e9ec}
 .num span{font-size:16px;line-height:1.45;color:#9aa0ad;max-width:240px}
-/* Code */
 pre{margin:4px 0 34px;padding:20px 22px;border-radius:12px;background:#181a1f;border:1px solid #2e323a;overflow:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;line-height:1.65;color:#b9bec9}
-pre .k{color:#8ea2e6}pre .s{color:#e3a3bd}pre .c{color:#6d7280}
-/* The ending: the camera pulls back to this article's neighbours. */
+pre .k{color:#8ea2e6}pre .s{color:#e3a3bd}pre .c{color:#8a909c}
 .end{position:relative;height:100vh;min-height:560px}
 .talk{position:absolute;left:8vw;top:50%;margin-top:-160px;width:min(440px,32vw)}
 .talk h2{font-size:46px;line-height:1.06}
 .talk .line{margin:22px 0 0;font-size:18px;line-height:1.6;color:#b9bec9;white-space:nowrap}
 .talk form{margin:24px 0 0;display:flex;gap:10px;flex-wrap:wrap}
-.talk input{flex:1 1 200px;min-width:0;padding:13px 18px;border-radius:999px;border:1px solid #3a3e47;background:rgba(21,23,26,.9);color:#e8e9ec;font-family:inherit;font-size:15px}
+.talk input{flex:1 1 200px;min-width:0;padding:13px 18px;border-radius:999px;border:1px solid #666b76;background:rgba(21,23,26,.9);color:#e8e9ec;font-family:inherit;font-size:15px}
 .talk .legal{margin:28px 0 0;font-size:13px;line-height:1.9;color:#7d8390}.talk .legal a{color:#9aa0ad;text-decoration:none}.talk .legal a:hover{color:#e8e9ec}
 .talk button{padding:13px 20px;border-radius:999px;border:1px solid #e8e9ec;background:#e8e9ec;color:#15171a;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer}
 .nb{position:absolute;width:250px;text-align:center;text-decoration:none;transform:translateX(-50%)}
@@ -106,6 +105,7 @@ body.plain .x{display:none}
  .blk.key{background:rgba(21,23,26,.6);padding-top:40px;padding-bottom:56px}
  .key p{font-size:30px;width:auto}
  .col p{font-size:17px}.col h2{font-size:26px}
+ .alink{white-space:normal}
  .note{position:static;width:auto;margin:0 0 26px}
  .sbs{grid-template-columns:1fr}
  .fig{height:170px}.fig span{font-size:11px;letter-spacing:0}
@@ -120,20 +120,20 @@ body.plain .x{display:none}
 </style>
 </head>
 <body>
-<canvas id="gl" role="img" aria-label="Abstract fractal of triangles and hexagons that holds the article's artwork"></canvas>
 <main>
+  <canvas id="gl" role="img" aria-label="Abstract fractal of triangles and hexagons that holds the article's artwork"></canvas>
   <header class="hd">
-    <a class="name" href="/" id="name">Leopold Lemmermann</a>
+    <a class="name" href="/" id="name">{{mark}}Leopold Lemmermann</a>
     <nav aria-label="Main" style="display:flex;gap:10px">
       {{icons}}
       <a class="pill nl" href="#talk" id="toTalk">Newsletter</a>
-      <a class="pill" id="openCal" data-cal href="https://cal.eu/leo-lem/gettoknow" style="background:#A05070;border-color:#A05070;color:#fff">Schedule a call</a>
+      <a class="pill" id="openCal" data-cal href="https://cal.com/leo-lem/talk" style="background:#A05070;border-color:#A05070;color:#fff">Schedule a call</a>
     </nav>
   </header>
 
   <section class="hero">
     <div class="t" id="title">
-      <p class="kick">{{date}}</p>
+      <p class="kick">{{date}} · {{read}}</p>
       <h1>{{title}}</h1>
       <p class="sum">{{summary}}</p>{{credit}}
     </div>

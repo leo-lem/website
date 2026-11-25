@@ -61,14 +61,16 @@ Resend kann Daten in die USA übertragen. Dafür gelten Standardvertragsklauseln
 
 ### Terminbuchung
 
-Über „Schedule a call“ können Sie einen Termin mit mir buchen. Dafür verwende ich Cal.com (Cal.com, Inc.) in der Instanz mit Datenhaltung in der EU. Der Kalender wird erst geladen, wenn Sie „Schedule a call“ öffnen; vorher verbindet sich Ihr Browser nicht mit Cal.com.
+Über „Schedule a call“ können Sie einen Termin mit mir buchen. Dafür verwende ich Cal.com (Cal.com, Inc., 2261 Market Street #4382, San Francisco, CA 94114, USA). Der Kalender wird erst geladen, wenn Sie „Schedule a call“ öffnen; vorher verbindet sich Ihr Browser nicht mit Cal.com.
 
 Beim Öffnen und Buchen verarbeitet Cal.com:
 
 - IP-Adresse sowie Browser- und Geräteinformationen
 - die Angaben, die Sie bei der Buchung machen (Name, E-Mail-Adresse, gegebenenfalls eine Nachricht)
 
-Die Daten dienen ausschließlich der Vereinbarung und Durchführung des Termins. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO. Datenschutzerklärung: [cal.com/privacy](https://cal.com/privacy)
+Die Daten dienen ausschließlich der Vereinbarung und Durchführung des Termins. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO.
+
+Cal.com verarbeitet die Daten in den USA und stützt die Übermittlung auf das EU-US Data Privacy Framework sowie ergänzend auf Standardvertragsklauseln gemäß Art. 46 DSGVO. Datenschutzerklärung: [cal.com/privacy](https://cal.com/privacy)
 
 ### Kontaktaufnahme
 

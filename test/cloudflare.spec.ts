@@ -1,29 +1,25 @@
-// What Cloudflare does with the built files (#36): old paths redirecting, slashes, the 404 page, noindex on previews.
-// Runs locally against serve.mjs, which mimics Cloudflare, and after every preview against the preview itself
-// (BASE_URL=<preview URL> PREVIEW=1 npx playwright test cloudflare), which is the real check.
 import { test, expect, type APIRequestContext } from '@playwright/test';
-import { due, redirects } from './content';
+import { due, redirects } from './content.ts';
 
 const get = async (request: APIRequestContext, path: string) => {
   const res = await request.get(path, { maxRedirects: 0 });
   return { status: res.status(), location: res.headers().location ?? '', robots: res.headers()['x-robots-tag'], text: await res.text() };
 };
-// Cloudflare may answer with an absolute or a relative location.
 const target = (location: string) => location.replace(/^https?:\/\/[^/]+/, '');
 
-// Every line of the redirect map, with and without the slash; a path ending in * also for something below it.
 const cases: [string, string][] = Object.entries(redirects).flatMap(([from, to]): [string, string][] => from.endsWith('/*')
   ? [[from.slice(0, -1), to], [from.slice(0, -2), to], [from.slice(0, -1) + 'anything/', to]]
   : [[from, to], [from.slice(0, -1), to]]);
 for (const [from, to] of cases) {
   test(`${from} redirects to ${to}`, async ({ request }) => {
+    const slugs = new Set((await due(request)).map((a) => a.slug));
+    const expected = to === '/' || slugs.has(to.replace(/^\/|\/$/g, '')) ? to : '/';
     const { status, location } = await get(request, from);
     expect(status).toBe(301);
-    expect(target(location)).toBe(to);
+    expect(target(location)).toBe(expected);
   });
 }
 
-// The general rule for every old article path.
 test('an old article path redirects to the article', async ({ request }) => {
   const { slug } = (await due(request))[0];
   for (const from of [`/blog/engineering/${slug}/`, `/blog/engineering/${slug}`]) {
@@ -43,8 +39,6 @@ test('an article without its trailing slash gets one', async ({ request }) => {
 test('a missing page is the 404 page, with status 404', async ({ request }) => {
   const { status, text } = await get(request, '/no-such-page/');
   expect(status).toBe(404);
-  // Worker Previews ignore not_found_handling and answer a plain "Not found", while a deploy of the same build
-  // serves the 404 page: a Cloudflare bug (cloudflare/workers-sdk#16534). So only the status counts on a preview.
   if (!process.env.BASE_URL) expect(text).toContain("This page doesn't exist.");
 });
 
@@ -60,7 +54,6 @@ test('noindex on every response of a preview, never in production', async ({ req
   }
 });
 
-// The newsletter's Worker (#39) runs only on Cloudflare, so these need a preview. None of them sends an email.
 test.describe('the newsletter API', () => {
   test.skip(!process.env.BASE_URL, 'the Worker runs only on Cloudflare');
   test('refuses a wrong address and a wrong method, and sends a bad link to /link-expired/', async ({ request }) => {

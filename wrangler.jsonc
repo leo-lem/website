@@ -1,10 +1,8 @@
-// The site on Cloudflare Workers (#17, #36): static files, and a small script for the newsletter's /api/* (#39).
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "leolem",
   "compatibility_date": "2026-11-24",
-  // Runs only for /api/*. Everything else is served from dist/ without it.
-  "main": "worker.mjs",
+  "main": "worker.ts",
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -12,17 +10,10 @@
     "html_handling": "auto-trailing-slash",
     "run_worker_first": ["/api/*"]
   },
-  // Production is the apex only. The first deploy (4.0.0, during the cutover #45) attaches it,
-  // which fails while the apex still points at GitHub Pages, so nothing deploys before that.
-  // www is a redirect rule in the zone, not a route here.
   "routes": [{ "pattern": "leolem.dev", "custom_domain": true }],
-  // No production copy on workers.dev, but the previews live there: pr-<n>-leolem.leopold-l.workers.dev
   "workers_dev": false,
   "preview_urls": true,
-  // Five signups a minute per address, so the form can't be used to mail strangers or use up Resend's daily quota.
-  // The secrets RESEND_API_KEY, RESEND_SEGMENT_ID and NEWSLETTER_SIGNING_KEY come from GitHub with each deploy.
   "ratelimits": [{ "name": "SIGNUPS", "namespace_id": "39001", "simple": { "limit": 5, "period": 60 } }],
-  // Previews inherit no bindings: the same limit, under its own namespace.
   "previews": {
     "ratelimits": [{ "name": "SIGNUPS", "namespace_id": "39002", "simple": { "limit": 5, "period": 60 } }]
   }

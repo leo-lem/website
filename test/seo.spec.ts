@@ -1,5 +1,3 @@
-// Being found (#43): what every page tells search engines, link previews and other machines.
-// Plain HTTP requests, no browser: none of this depends on script.
 import { test, expect, type APIRequestContext } from '@playwright/test';
 
 const SITE = 'https://leolem.dev';
@@ -64,7 +62,6 @@ test('an article without its trailing slash redirects to it', async ({ request }
 });
 
 test('a page reached with a query string is kept out of the index', async ({ request }) => {
-  // Static files can't vary by query, so the page adds noindex itself when it sees one.
   const { text } = await get(request, '/?ref=x');
   expect(text).toContain(`if (location.search) document.write('<meta name="robots" content="noindex,follow">');`);
 });

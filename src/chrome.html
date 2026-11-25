@@ -1,6 +1,4 @@
 <style>
-/* Profiles (from docs/positioning.md): each service's mark in a hexagon outline that lights up like the
-   article hexagons. In the header from the article pages onward, under I'm Leo on the home page. */
 .hd .icons{display:flex;gap:4px;align-items:center;margin-right:4px}
 .hx{display:inline-block;width:38px;height:38px;pointer-events:auto;flex:none}.hx svg{width:100%;height:100%;display:block}
 .hx .o{fill:rgba(21,23,26,.88);stroke:#5A6FA5;stroke-width:1.4;transition:stroke .3s,fill .3s}.hx .g{fill:#b9bec9;transition:fill .3s}
@@ -10,8 +8,9 @@ a.hx:focus-visible,.profiles a:focus-visible{outline:none}
 .profiles{margin:26px 0 0;display:flex;flex-wrap:wrap;gap:8px 22px}
 .profiles a{display:flex;align-items:center;gap:8px;text-decoration:none;font-size:14px;color:#9aa0ad;transition:color .3s}.profiles a:hover,.profiles a:focus-visible{color:#e8e9ec}
 .profiles .hx{width:42px;height:42px}
-/* Imprint and Privacy: the quietest text, in the bottom corner of the last screen. */
 .corner{position:absolute;left:8vw;bottom:26px;margin:0;font-size:12px;color:#6d7280;z-index:2}.corner a{color:#7d8390;text-decoration:none}.corner a:hover{color:#e8e9ec}
 .phone-only{display:none}
+.vh{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+.rail button:focus-visible,.tuneBtn:focus-visible,.plainBtn:focus-visible{outline:1px solid #5A6FA5;outline-offset:3px;border-radius:3px}
 @media (max-width:720px){.hd .icons{display:none}.phone-only{display:flex}.corner{left:20px;bottom:16px}}
 </style>

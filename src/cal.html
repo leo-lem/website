@@ -1,7 +1,3 @@
-<!-- Schedule a call: our own dialog over the page, with Cal.com's booking calendar inline inside it (EU
-     instance), so the close button sits on the dialog itself. Cal.com's script loads only on the first open,
-     so the page contacts no third party until then. Without script, or if Cal.com can't be reached, the
-     button is a plain link to the booking page. -->
 <style>
 .pill[data-cal]{text-decoration:none;display:inline-block}
 .calbox{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(12,13,15,.78)}
@@ -24,11 +20,10 @@
 </div>
 <script>
 (function () {
-  var ORIGIN = 'https://app.cal.eu', LINK = 'leo-lem/gettoknow', NS = 'gettoknow';
+  var ORIGIN = 'https://app.cal.com', LINK = 'leo-lem/talk', NS = 'talk';
   var box = document.getElementById('calbox'), loaded = false, opener = null;
   function load() {
     if (loaded) return; loaded = true;
-    // Cal.com's own loader: queues calls until embed.js has arrived.
     (function (C, A, L) {
       var p = function (a, ar) { a.q.push(ar); }, d = C.document;
       C.Cal = C.Cal || function () {
@@ -42,8 +37,7 @@
     Cal.ns[NS]('inline', { elementOrSelector: '#calInline', calLink: LINK, layout: 'month_view', config: { layout: 'month_view', theme: 'dark' } });
     Cal.ns[NS]('ui', { theme: 'dark', layout: 'month_view', cssVarsPerTheme: { dark: { 'cal-brand': '#A05070', 'cal-bg': '#15171a', 'cal-bg-muted': '#181a1f', 'cal-border': '#2e323a', 'cal-border-subtle': '#23262d' } } });
   }
-  // If Cal.com doesn't load, the dialog says so and offers the booking page; the page itself stays.
-  function fail() { var w = document.querySelector('#calInline .wait'); if (w) w.innerHTML = 'The calendar didn\u2019t load. <a href="https://cal.eu/' + LINK + '" target="_blank" rel="noopener">Open the booking page</a>'; }
+  function fail() { var w = document.querySelector('#calInline .wait'); if (w) w.innerHTML = 'The calendar didn\u2019t load. <a href="https://cal.com/' + LINK + '" target="_blank" rel="noopener">Open the booking page</a>'; }
   function open(a) { opener = a; load(); setTimeout(function () { if (!document.querySelector('#calInline iframe')) fail(); }, 8000); box.classList.add('open'); document.documentElement.style.overflow = 'hidden'; document.getElementById('calClose').focus(); }
   function close() { box.classList.remove('open'); document.documentElement.style.overflow = ''; if (opener) opener.focus(); }
   window.__calOpen = function () { return box.classList.contains('open'); };

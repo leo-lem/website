@@ -1,9 +1,6 @@
-// The few things that need a browser: the home page's section marker, Schedule a call staying on the page, and
-// no script errors. The fractal renders in software (see playwright.config.ts), so these stay few and quick.
 import { test, expect } from '@playwright/test';
-import { due } from './content';
+import { due } from './content.ts';
 
-// Only the local site: Cal.com and anything else outside are blocked, so these tests never depend on them.
 test.beforeEach(async ({ context }) => {
   await context.route((url) => !/^(localhost|127\.0\.0\.1)$/.test(url.hostname), (route) => route.abort());
 });
@@ -20,10 +17,23 @@ test('the home page keeps its section in the address and opens there', async ({ 
   await expect(page).toHaveURL(/#talk$/);
   await page.keyboard.press('Home');
   await expect(page).toHaveURL(/\/$/);
-  // A link straight to a section opens on it, and the address keeps it.
   await page.goto('/#off-the-clock');
   await page.waitForTimeout(300);
   await expect(page).toHaveURL(/#off-the-clock$/);
+});
+
+test('the home page leaves a sideways swipe to the browser', async ({ page }) => {
+  test.skip(!!process.env.CI, 'needs WebGL, which is off on CI');
+  await page.goto('/');
+  const taken = (deltaX: number, deltaY: number) => page.evaluate(([x, y]) => {
+    const e = new WheelEvent('wheel', { deltaX: x, deltaY: y, bubbles: true, cancelable: true });
+    document.getElementById('stage')!.dispatchEvent(e);
+    return e.defaultPrevented;
+  }, [deltaX, deltaY]);
+  expect(await taken(0, 40)).toBe(true);
+  expect(await taken(6, 40)).toBe(true);
+  expect(await taken(60, 4)).toBe(false);
+  expect(await taken(-60, 0)).toBe(false);
 });
 
 test('Schedule a call stays on the page, home and article alike', async ({ page }) => {
@@ -47,10 +57,9 @@ test('the pages run without script errors', async ({ page }) => {
 });
 
 test('without WebGL the home page is an ordinary page with everything on it', async ({ page }) => {
-  // This browser has no WebGL, as for a visitor whose browser blocks it.
   await page.addInitScript(() => {
     const get = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (type: string, ...rest: unknown[]) { return /webgl/.test(type) ? null : get.call(this, type, ...rest); } as typeof get;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) { return /webgl/.test(type) ? null : get.call(this, type, ...rest); } as typeof get;
   });
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveClass(/\bgl\b/);
@@ -58,7 +67,6 @@ test('without WebGL the home page is an ordinary page with everything on it', as
   await expect(page.locator('.ewin').first()).toBeVisible();
   await expect(page.locator('#nl-email')).toBeVisible();
   await expect(page.locator('.s1 .profiles a').first()).toBeVisible();
-  // It scrolls like a normal page.
   await page.mouse.wheel(0, 1500);
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
 });

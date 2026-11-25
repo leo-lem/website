@@ -4,12 +4,13 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "build": "node build.mjs",
-    "serve": "node serve.mjs",
-    "dev": "node build.mjs && node serve.mjs",
-    "favicon": "node favicon.mjs",
+    "build": "node build.ts",
+    "serve": "node serve.ts",
+    "dev": "node build.ts && node serve.ts",
+    "favicon": "node favicon.ts",
     "test": "npx playwright test",
-    "images": "node images.mjs"
+    "images": "node images.ts",
+    "typecheck": "tsc -p ."
   },
   "dependencies": {
     "markdown-it": "^15.0.3",
@@ -18,7 +19,12 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.1",
+    "@cloudflare/workers-types": "^5.20261125.1",
     "@playwright/test": "^1.65.1",
+    "@types/markdown-it": "^14.2.0",
+    "@types/node": "^24.19.4",
+    "typescript": "^7.0.2",
     "wrangler": "^4.167.0"
   }
 }

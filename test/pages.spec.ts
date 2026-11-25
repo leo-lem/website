@@ -1,6 +1,5 @@
-// What the pages carry, checked over plain HTTP: none of it depends on script.
 import { test, expect, type APIRequestContext } from '@playwright/test';
-import { all, due } from './content';
+import { all, due, posts } from './content.ts';
 
 const get = async (request: APIRequestContext, p: string) => {
   const r = await request.get(p, { maxRedirects: 0 });
@@ -28,12 +27,28 @@ test('every due article has its page: title, summary, date, body and marked link
     expect(status, a.slug).toBe(200);
     expect(textOf(text.match(/<h1>([\s\S]*?)<\/h1>/)![1]), a.slug).toBe(a.title);
     expect(text, a.slug).toMatch(/<p class="sum">[^<]{20,}<\/p>/);
-    expect(text, a.slug).toMatch(/<p class="kick">\d{1,2} [A-Z][a-z]+ \d{4}<\/p>/);
+    expect(text, a.slug).toMatch(/<p class="kick">\d{1,2} [A-Z][a-z]+ \d{4} · \d+ min read<\/p>/);
+    expect(text, a.slug).toMatch(/"timeRequired":"PT\d+M"/);
     expect((text.match(/<section class="blk/g) || []).length, `${a.slug}: body`).toBeGreaterThan(0);
-    // A link to another article is marked while that article is out, and plain text until it is.
     for (const s of a.links.filter((s) => s !== a.slug && all.some((b) => b.slug === s))) {
       if (out.has(s)) expect(text, `${a.slug} -> ${s}`).toMatch(new RegExp(`<a href="/${s}/[^"]*" class="alink">`));
       else expect(text, `${a.slug} -> ${s}, not out yet`).not.toContain(`href="/${s}/`);
+    }
+  }
+});
+
+test('an article that went out on LinkedIn ends with a link to the discussion there, in its Markdown too', async ({ request }) => {
+  const list = await due(request), held = await posts();
+  for (const a of list) {
+    const page = (await get(request, `/${a.slug}/`)).text, mdText = (await get(request, `/${a.slug}.md`)).text;
+    const link = page.match(/<a class="disc" href="([^"]+)">/);
+    if (held[a.slug]) {
+      expect(link?.[1], a.slug).toBe(held[a.slug]);
+      expect(page.lastIndexOf('<section class="blk'), a.slug).toBeLessThan(page.indexOf('<a class="disc"'));
+      expect(mdText.trimEnd().endsWith(`[Join the discussion on LinkedIn](${held[a.slug]})`), a.slug).toBe(true);
+    } else {
+      expect(link, a.slug).toBeNull();
+      expect(mdText, a.slug).not.toContain('Join the discussion');
     }
   }
 });
@@ -57,7 +72,6 @@ test('the neighbours at an article\'s end are due articles it is connected to', 
     for (const m of text.matchAll(/<a class="nb" href="\/([a-z0-9-]+)\/" data-i="[12]"><i>(Builds on|Came after)<\/i>/g)) {
       seen++;
       expect(out.has(m[1]), `${a.slug}: ${m[2]} ${m[1]}`).toBe(true);
-      // Builds on: an article this one links to. Came after: one that links to this one.
       if (m[2] === 'Builds on') expect(a.links, `${a.slug} builds on ${m[1]}`).toContain(m[1]);
       else expect(all.find((b) => b.slug === m[1])!.links, `${m[1]} came after ${a.slug}`).toContain(a.slug);
     }
@@ -67,9 +81,8 @@ test('the neighbours at an article\'s end are due articles it is connected to', 
 
 test('the Off the clock cards link out to Apple Music, Polarsteps and Strava', async ({ request }) => {
   const { text } = await get(request, '/');
-  const cards = [...text.matchAll(/<a class="ewin" href="([^"]+)" aria-label="([^"]+)"><span class="card"><img src="([^"]+)"/g)];
+  const cards = [...text.matchAll(/<a class="ewin" href="([^"]+)"><span class="vh">([^<]+)<\/span><span class="card"><img src="([^"]+)"/g)];
   expect(cards).toHaveLength(3);
-  // The newest release, trip and run, or the service's own site when the build couldn't fetch them.
   expect(cards[0][1]).toMatch(/^https:\/\/music\.apple\.com\//);
   expect(cards[1][1]).toMatch(/^https:\/\/www\.polarsteps\.com\//);
   expect(cards[2][1]).toMatch(/^https:\/\/www\.strava\.com\//);

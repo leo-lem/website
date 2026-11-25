@@ -1,10 +1,5 @@
-# What the home page's Off the clock section shows. Each card is fetched when the site is built and always
-# shows the newest: nothing here needs changing when something new comes out.
-
-# Music: the newest release of this Apple Music artist (the ID in the artist's Apple Music URL).
 music:
   artist: 294484717
 
-# Travel: the newest trip of this Polarsteps user.
 travel:
   polarsteps: leolem
